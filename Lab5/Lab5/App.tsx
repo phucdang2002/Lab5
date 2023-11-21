@@ -17,10 +17,9 @@ function LoginScreen() {
 
 function App() {
   return(
-    <NavigationContainer>
-      <LoginScreen/>
-    </NavigationContainer>
-    // <Login/>
+      <NavigationContainer>
+        <LoginScreen/>
+      </NavigationContainer>
   );
 }
 export default App;

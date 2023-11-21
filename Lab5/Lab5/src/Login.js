@@ -7,30 +7,29 @@ import Home from './Home';
 import Detail from './ServiceDetail';
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DetailHeader } from './ServiceDetail';
+import Edit from './EditService';
 
 
 const Stack = createStackNavigator();
 const Login = ({navigation}) => {
   const [phone, setPhone] = useState('');
-  const [user, setUser] = useState([]);
   const [password, setPassword] = useState('');
 
   const authentication = () => {
+    const filePath = 'https://kami-backend-5rs0.onrender.com/auth';
     const auth = {
       phone: phone,
       password: password,
     };
     console.log(auth);
-    axios.post('https://kami-backend-5rs0.onrender.com/auth', auth)
+    axios.post(filePath, auth)
       .then(response => {
-        console.log(response.data);
-        setUser(response.data);
+        navigation.navigate('Screen', {user: response.data});
       })
       .catch(error => {
         console.error(error);
       });
-      console.log(user);
-    navigation.navigate('Screen', {user: user});
   };
   return (
     <SafeAreaView style={styles.login}>
@@ -85,8 +84,13 @@ export const ServiceScreen = ({route}) => {
       <Stack.Screen
         name="Detail"
         component={Detail}
-        options={{title: 'Service detail'}}
+        options={{
+          title: 'Service Detail',
+          headerRight: ({ navigation }) => (
+          <DetailHeader navigation={navigation} />)
+        }}
       />
+      {/* <Stack.Screen name="Edit" component={Edit} options={{title: 'Service'}} /> */}
     </Stack.Navigator>
   );
 };
@@ -117,6 +121,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 50,
     borderRadius: 10,
+    
     marginTop: 30,
     fontSize: 30,
   },
