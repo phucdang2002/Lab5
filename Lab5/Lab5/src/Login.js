@@ -1,6 +1,6 @@
 import axios from 'axios';
 import {SafeAreaView, TextInput, StyleSheet, View, Alert} from 'react-native';
-import {Text, Button, Provider} from 'react-native-paper';
+import {Text, Button} from 'react-native-paper';
 import {useState} from 'react';
 import Add from './AddService';
 import Home from './Home';
@@ -9,8 +9,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DetailHeader } from './ServiceDetail';
 import Edit from './EditService';
-import { NavigationContainer } from '@react-navigation/native';
-
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Stack = createStackNavigator();
 const Login = ({navigation}) => {
@@ -63,7 +62,7 @@ const saveToken = async(token) =>{
         console.error(error);
       }
   }
-export const ServiceScreen = ({route}) => {
+export const ServiceScreen = ({navigation, route}) => {
   const auth = route.params;
   const {user} = auth;
   const {name, token} = user;
@@ -78,7 +77,7 @@ export const ServiceScreen = ({route}) => {
       <Stack.Screen
         name="Home"
         component={Home}
-        options={{title: name.toUpperCase()}}
+        options={{title: name.toUpperCase(), headerLeft: () => null, headerRight:()=><Text style={{margin: 10}}><Icon name="user-circle-o" size={25} color="#fff"/></Text>}}
       />
       <Stack.Screen name="Add" component={Add} options={{title: 'Service'}} />
       <Stack.Screen
@@ -87,7 +86,7 @@ export const ServiceScreen = ({route}) => {
         options={{
           title: 'Service Detail',
           headerRight: () => (
-              <DetailHeader/>
+              <DetailHeader navigation={navigation}/>
           )
         }}
       />

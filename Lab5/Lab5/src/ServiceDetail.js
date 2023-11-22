@@ -7,8 +7,7 @@ import {Menu, MenuTrigger, MenuOption, MenuOptions, MenuProvider} from "react-na
 import Icon from 'react-native-vector-icons/Entypo';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const DetailHeader = () => {
-    const navigation = getNavigation();
+export const DetailHeader = ({navigation}) => {
     const handleMenuSelect = (option) => {
       if (option==="Edit") {
         navigation.navigate("Edit");
@@ -37,16 +36,7 @@ export const DetailHeader = () => {
       </MenuProvider>
     );
   };
-  const getNavigation = async () =>{
-    try {
-      const value = await AsyncStorage.getItem('navigation');
-      if (value !== null) {
-          return JSON.parse(value);
-      }
-    } catch (error) {
-        console.log(error);
-    }
-  };
+  
 const saveId = async(_id) =>{
   try {
       await AsyncStorage.setItem('id', JSON.stringify(_id));
@@ -64,13 +54,6 @@ const saveName = async(name) =>{
 const savePrice = async(price) =>{
   try {
       await AsyncStorage.setItem('price', JSON.stringify(price));
-    } catch (error) {
-      console.error(error);
-    }
-}
-const saveNavigation = async(navigation) =>{
-  try {
-      await AsyncStorage.setItem('navigation', JSON.stringify(navigation));
     } catch (error) {
       console.error(error);
     }
@@ -111,8 +94,7 @@ const deleteService = async () =>{
     })
   }
 
-const Detail = ({navigation, route}) => {
-    saveNavigation(navigation);
+const Detail = ({route}) => {
     const {service} =route.params;
     const {_id, name, price}=service;
     saveId(_id);
