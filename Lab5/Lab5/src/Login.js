@@ -4,11 +4,12 @@ import {Text, Button, Provider} from 'react-native-paper';
 import {useState} from 'react';
 import Add from './AddService';
 import Home from './Home';
-import Detail from './ServiceDetail';
+import Detail, { DetailContainer } from './ServiceDetail';
 import {createStackNavigator} from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DetailHeader } from './ServiceDetail';
 import Edit from './EditService';
+import { NavigationContainer } from '@react-navigation/native';
 
 
 const Stack = createStackNavigator();
@@ -22,7 +23,6 @@ const Login = ({navigation}) => {
       phone: phone,
       password: password,
     };
-    console.log(auth);
     axios.post(filePath, auth)
       .then(response => {
         navigation.navigate('Screen', {user: response.data});
@@ -86,11 +86,12 @@ export const ServiceScreen = ({route}) => {
         component={Detail}
         options={{
           title: 'Service Detail',
-          headerRight: ({ navigation }) => (
-          <DetailHeader navigation={navigation} />)
+          headerRight: () => (
+              <DetailHeader/>
+          )
         }}
       />
-      {/* <Stack.Screen name="Edit" component={Edit} options={{title: 'Service'}} /> */}
+      <Stack.Screen name="Edit" component={Edit} options={{title: 'Service'}} />
     </Stack.Navigator>
   );
 };

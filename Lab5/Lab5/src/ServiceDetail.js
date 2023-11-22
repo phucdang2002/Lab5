@@ -1,4 +1,4 @@
-import { Alert, SafeAreaView, TouchableOpacity } from "react-native";
+import { Alert, SafeAreaView } from "react-native";
 import { Text } from "react-native-paper";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -7,8 +7,9 @@ import {Menu, MenuTrigger, MenuOption, MenuOptions, MenuProvider} from "react-na
 import Icon from 'react-native-vector-icons/Entypo';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const DetailHeader = ({ navigation }) => {
-    const handleMenuSelect = option => {
+export const DetailHeader = () => {
+    const navigation = getNavigation();
+    const handleMenuSelect = (option) => {
       if (option==="Edit") {
         navigation.navigate("Edit");
       }else {
@@ -17,9 +18,7 @@ export const DetailHeader = ({ navigation }) => {
           onPress: () => {},
           style: 'cancel',
         },
-        {text: 'OK', onPress: () => {
-
-        }}
+        {text: 'OK', onPress: deleteService}
       ])
       }
     };
@@ -38,30 +37,89 @@ export const DetailHeader = ({ navigation }) => {
       </MenuProvider>
     );
   };
-
-const Detail = ({route}) => {
-    const {service} =route.params;
-    const {_id}=service;
-    const saveId = async(_id) =>{
-      try {
-          await AsyncStorage.setItem('id', JSON.stringify(_id))
-        } catch (error) {
-          console.error(error);
-        }
+  const getNavigation = async () =>{
+    try {
+      const value = await AsyncStorage.getItem('navigation');
+      if (value !== null) {
+          return JSON.parse(value);
+      }
+    } catch (error) {
+        console.log(error);
     }
+  };
+const saveId = async(_id) =>{
+  try {
+      await AsyncStorage.setItem('id', JSON.stringify(_id));
+    } catch (error) {
+      console.error(error);
+    }
+}
+const saveName = async(name) =>{
+  try {
+      await AsyncStorage.setItem('name', JSON.stringify(name));
+    } catch (error) {
+      console.error(error);
+    }
+}
+const savePrice = async(price) =>{
+  try {
+      await AsyncStorage.setItem('price', JSON.stringify(price));
+    } catch (error) {
+      console.error(error);
+    }
+}
+const saveNavigation = async(navigation) =>{
+  try {
+      await AsyncStorage.setItem('navigation', JSON.stringify(navigation));
+    } catch (error) {
+      console.error(error);
+    }
+}
+const authToken = async () =>{
+  try {
+    const value = await AsyncStorage.getItem('token');
+    if (value !== null) {
+        return JSON.parse(value);
+    }
+  } catch (error) {
+      console.log(error);
+  }
+};
+const Id = async () =>{
+  try {
+    const value = await AsyncStorage.getItem('id');
+    if (value !== null) {
+        return JSON.parse(value);
+    }
+  } catch (error) {
+      console.log(error);
+  }
+};
+const deleteService = async () =>{
+  const _id = await Id();
+  const filePath = "https://kami-backend-5rs0.onrender.com/services/"+_id;
+  axios.delete(filePath,{
+    headers: {
+        Authorization: `Bearer ${authToken}`
+    },
+    })
+    .then(() =>{
+        Alert.alert("Delete successfully")
+    })
+    .catch(error => {
+        console.error(error);
+    })
+  }
+
+const Detail = ({navigation, route}) => {
+    saveNavigation(navigation);
+    const {service} =route.params;
+    const {_id, name, price}=service;
+    saveId(_id);
+    saveName(name);
+    savePrice(price);
     const [data, setData] = useState([]);
     const filePath = "https://kami-backend-5rs0.onrender.com/services/"+_id;
-    
-    const authToken = async () =>{
-      try {
-        const value = await AsyncStorage.getItem('token');
-        if (value !== null) {
-            return JSON.parse(value);
-        }
-      } catch (error) {
-          console.log(error);
-      }
-    };
     useEffect(() =>{
         axios.get(filePath)
         .then(response =>{
@@ -71,19 +129,6 @@ const Detail = ({route}) => {
             console.error(error);
         })
     },[]);
-    const deleteService = () =>{
-        axios.delete(filePath,{
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
-            .then(() =>{
-                Alert.alert("Delete successfully")
-            })
-            .catch(error => {
-                console.error(error);
-            })
-        })
-    }
     return (
         <SafeAreaView>
             <Text>Service name: {data.name}</Text>
