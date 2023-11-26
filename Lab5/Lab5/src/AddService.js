@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, TextInput } from "react-native";
 import { Button, Text } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,12 +18,18 @@ const Add = () =>{
             console.log(error);
         }
     }
+    useEffect(() => {
+        authToken();
+      }, []);
     const addService = async ()=>{
-        await authToken();
+        if (!token) {
+            await authToken();
+        }
         const postData = {
             name: name,
             price: price
         };
+        console.log(token);
         axios.post('https://kami-backend-5rs0.onrender.com/services', postData, {
             headers:{
                 Authorization: `Bearer ${token}`,
